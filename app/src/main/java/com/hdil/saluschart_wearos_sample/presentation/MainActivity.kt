@@ -22,6 +22,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,7 +51,11 @@ import com.hdil.saluschart.ui.wear.compose.WearSleepStageChart
 import com.hdil.saluschart.ui.theme.LocalSalusChartColors
 import com.hdil.saluschart.ui.theme.SalusChartColorScheme
 import com.hdil.saluschart_wearos_sample.presentation.theme.SalusChartwearossampleTheme
+import java.time.LocalDateTime
 import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import kotlinx.coroutines.delay
 
 private val SamsungOrange = Color(0xFFFF7A3D)
 private val TrackGray = Color(0xFF242424)
@@ -60,6 +69,8 @@ private val SleepStageScheme = SalusChartColorScheme(
     secondary = LabelGray,
     palette = listOf(SleepDeep, SleepCore, SleepRem, SleepAwake),
 )
+private val ClockFormatter = DateTimeFormatter.ofPattern("HH:mm")
+private val DateFormatter = DateTimeFormatter.ofPattern("d EEE", Locale.ENGLISH)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,23 +132,37 @@ private fun WatchHomeScreen() {
             trackAlpha = 0.22f,
         )
         Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "23:48",
-            color = Color.White,
-            fontSize = 38.sp,
-            lineHeight = 38.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = "3 FRI",
-            color = Color.White,
-            fontSize = 16.sp,
-            lineHeight = 19.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-        )
+        CurrentTimeFooter()
     }
+}
+
+@Composable
+private fun CurrentTimeFooter() {
+    var now by remember { mutableStateOf(LocalDateTime.now()) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            now = LocalDateTime.now()
+            delay(1_000L)
+        }
+    }
+
+    Text(
+        text = now.format(ClockFormatter),
+        color = Color.White,
+        fontSize = 38.sp,
+        lineHeight = 38.sp,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center,
+    )
+    Text(
+        text = now.format(DateFormatter).uppercase(Locale.ENGLISH),
+        color = Color.White,
+        fontSize = 16.sp,
+        lineHeight = 19.sp,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center,
+    )
 }
 
 @Composable
@@ -366,13 +391,6 @@ private fun SleepStageScreen() {
                     )
                 }
                 Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = "10:09",
-                        color = Color.White,
-                        fontSize = 25.sp,
-                        lineHeight = 27.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
                     Text(
                         text = "Sleep Stages",
                         color = Color(0xFF8A8BFF),
