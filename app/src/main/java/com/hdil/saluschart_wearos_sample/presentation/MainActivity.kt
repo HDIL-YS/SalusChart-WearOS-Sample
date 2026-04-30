@@ -244,6 +244,8 @@ private fun HeartRateScreen(bpm: Int, knobPosition: Float) {
 
 @Composable
 private fun StressScreen() {
+    val stressMarkerRatio = 0.1f
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -283,7 +285,7 @@ private fun StressScreen() {
                 WearMinimalGaugeSegment(0.11f, Color(0xFFFFD12A)),
                 WearMinimalGaugeSegment(0.26f, Color(0xFFFF951F)),
             ),
-            markerRatio = 0.0f,
+            markerRatio = stressMarkerRatio,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(16.dp),
@@ -383,7 +385,7 @@ private fun SleepStageScreen() {
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "◷",
+                        text = "",
                         color = Color(0xFF8FA2FF),
                         fontSize = 20.sp,
                         lineHeight = 20.sp,
